@@ -20,8 +20,20 @@ $(document).ready(function(){
 	    $highest_id = $row[0];
 	    echo $highest_id;
 	?>';
+	setInterval(function() { 
+		//updateSensor();	
+		<?php
+		$result = mysql_query("DELETE FROM object");
+		?>
+	}, 5000);
 	setInterval(function() { 		
 		updatePosUBU();
+		<?php
+		$result = mysql_query("SELECT * FROM object");
+	    while($row = mysql_fetch_array($result)){
+		?>
+			detectedObject('<?php echo $row['mac']?>')
+		<?php }?>
 		$.get("test.php",function(data){
 			if(data > IdCmd){
 				updateSensor();
@@ -521,7 +533,7 @@ $(document).ready(function(){
         <input onclick="clearMarkers();" type=button value="Hide Markers" class="button buttonLan">
         <input onclick="showMarkers();" type=button value="Show All Markers" class="button buttonLan">
         <input onclick="deleteMarkers();" type=button value="Delete Markers" class="button buttonLan">
-        <input onclick="showPath('08');" type=button value="Animation" class="button buttonLan">
+        <button onclick="clearObject()" class="button buttonLan">Clear Object</button>
         <input onclick="updateSensor();" type=button value="Update Sensor" class="button buttonLan">
 </script>
  
@@ -630,7 +642,7 @@ var iconTrucThang = 'https://www.google.com/mapfiles/ms/icons/helicopter.png';
 			"mac": mac,
 			"mark": marker	
 		}
-		alert(obj["mac"]);
+		//alert(obj["mac"]);
 		markers.push(obj);
 	}
 	
@@ -672,12 +684,12 @@ var iconTrucThang = 'https://www.google.com/mapfiles/ms/icons/helicopter.png';
 		markers = [];
 	}	
 	
-	function showPath(mac){
+	function detectedObject(mac){
 		for (var i = 0; i < markers.length; i++) {
 			if(markers[i]["mac"] == mac){
 				var marker = markers[i]["mark"];
 				marker.setAnimation(google.maps.Animation.BOUNCE);
-			//stopAnimation(marker);
+			//  stopAnimation(marker);
 			}
 		}
 	}

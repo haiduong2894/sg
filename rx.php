@@ -486,6 +486,8 @@ if(strpos($result,"#SN") !== false){//#SN:NNNNMMSS
 	    	//$status = "intrusion";
 	    	$my_query = "INSERT INTO data_sensor(mac,netip,time,cat) VALUES ('".$mac."','".$network_ip."',now(),33)";
 			mysql_query ($my_query);
+			$insertObject = "INSERT INTO object(mac,netip,time) VALUES ('".$mac."','".$network_ip."',now())";
+			mysql_query ($insertObject);
 	    }
 	    elseif($state_node == "04"){//het nang luong
 	     	//$status = "energy";
