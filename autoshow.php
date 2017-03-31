@@ -197,7 +197,7 @@ if(strpos($result, "#PS:") !== false){ //#PS:MMNNNNVVVVVVVVVVKKKKKKKKKK
 		
 	
 	
-	if(strpos($result,"#SN") !== false){
+	if(strpos($result,"SN") !== false){
      	$network_ip = substr($result,4,4);
      	$mac = substr($result,8,2);
      	$state_node = substr($result,10,2);
@@ -208,11 +208,11 @@ if(strpos($result, "#PS:") !== false){ //#PS:MMNNNNVVVVVVVVVVKKKKKKKKKK
      	if($state_node == "02"){
      		$bantin= $bantin."Phát hiện cảnh báo cháy tại node: ";     		
 		}
-		elseif($state_node == "03"){
-     		$bantin= $bantin."Phát hiện hết năng lượng tại node: ";
-     	}
-     	elseif($state_node == "04"){
+     	elseif($state_node == "03"){
      		$bantin= $bantin."Phát hiện xâm nhập tại node: ";
+     	}
+		elseif($state_node == "04"){
+     		$bantin= $bantin."Phát hiện hết năng lượng tại node: ";
      	}
      	$bantin= $bantin.$mac."<br />";
      	$bantin= $bantin."Địa chỉ mạng node:".$network_ip."<br />";

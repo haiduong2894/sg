@@ -21,19 +21,8 @@ $(document).ready(function(){
 	    echo $highest_id;
 	?>';
 	setInterval(function() { 
-		//updateSensor();	
-		<?php
-		$result = mysql_query("DELETE FROM object");
-		?>
-	}, 5000);
-	setInterval(function() { 		
+					
 		updatePosUBU();
-		<?php
-		$result = mysql_query("SELECT * FROM object");
-	    while($row = mysql_fetch_array($result)){
-		?>
-			detectedObject('<?php echo $row['mac']?>')
-		<?php }?>
 		$.get("test.php",function(data){
 			if(data > IdCmd){
 				updateSensor();
@@ -533,7 +522,7 @@ $(document).ready(function(){
         <input onclick="clearMarkers();" type=button value="Hide Markers" class="button buttonLan">
         <input onclick="showMarkers();" type=button value="Show All Markers" class="button buttonLan">
         <input onclick="deleteMarkers();" type=button value="Delete Markers" class="button buttonLan">
-        <button onclick="clearObject()" class="button buttonLan">Clear Object</button>
+        <button onclick="stopObject('07')" class="button buttonLan">Clear Object</button>
         <input onclick="updateSensor();" type=button value="Update Sensor" class="button buttonLan">
 </script>
  
@@ -594,7 +583,6 @@ var iconTrucThang = 'https://www.google.com/mapfiles/ms/icons/helicopter.png';
           strokeWeight: 3
         });
         poly.setMap(map);
-		
 	}
 	
 	function addMarkerMac(location, mac,status) {
@@ -631,7 +619,7 @@ var iconTrucThang = 'https://www.google.com/mapfiles/ms/icons/helicopter.png';
 				success:function(req){ 
 					google.maps.event.addListener(marker, 'click', (function(marker) {
 						return function() {
-							infowindow.setContent(req + '<button onclick="drawAll()" class="button button1">Draw Chart</button>');
+							infowindow.setContent(req + '<button onclick="drawAll('+mac+')" class="button button1">Draw Chart</button>');
 							infowindow.open(map, marker);
 							//updateSensor();
 						}
@@ -689,7 +677,18 @@ var iconTrucThang = 'https://www.google.com/mapfiles/ms/icons/helicopter.png';
 			if(markers[i]["mac"] == mac){
 				var marker = markers[i]["mark"];
 				marker.setAnimation(google.maps.Animation.BOUNCE);
+				setTimeout(function(){  marker.setAnimation(null); }, 3000);
 			//  stopAnimation(marker);
+			}
+		}
+	}
+	
+	function stopObject(mac){
+		for (var i = 0; i < markers.length; i++) {
+			if(markers[i]["mac"] == mac){
+				var marker = markers[i]["mark"];
+			    marker.setAnimation(null);
+				//alert( markers[i]["mac"]);	
 			}
 		}
 	}
@@ -698,7 +697,8 @@ var iconTrucThang = 'https://www.google.com/mapfiles/ms/icons/helicopter.png';
 		deleteMarkers();
 		$.ajax({
 			url: "getPosition.php",                           
-			type: "POST",
+			type: "GET",
+			data: "table=cdata",
 			async: false,
 			success:function(req){ 
 				result = JSON.parse(req);
@@ -715,6 +715,13 @@ var iconTrucThang = 'https://www.google.com/mapfiles/ms/icons/helicopter.png';
                 });
 			}	
 		});	
+		$.get("getPosition.php","table=object",
+				function(data){
+						result = JSON.parse(data);
+						$.each (result, function (key, item){
+							detectedObject(item['mac']);
+						});
+		});
 	}
 	
 	function updatePosUBU(){
